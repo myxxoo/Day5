@@ -3,10 +3,19 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
-
-    <TextView
+    <Button 
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/hello" />
+        android:text="@string/title"
+        android:visibility="gone"
+        />
+    <GridView
+        android:id="@+id/gridview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:horizontalSpacing="2.0dp"
+        android:verticalSpacing="2.0dp"
+        android:numColumns="2"
+        />
 
 </LinearLayout>
