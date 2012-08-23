@@ -3,11 +3,16 @@ package com.day5.app;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import com.day5.lazylist.ImageLoader;
+import com.day5.others.apis.UpYun;
 
 import android.app.Activity;
+import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +20,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
@@ -27,14 +33,24 @@ public class Main extends Activity{
 	private Button moreButton;
 	private MyAdapter adapter;
 	private ImageLoader imageLoader;
-	
-	private ArrayList<String> data = new ArrayList<String>();
 	private Animation animationIn;
 	private Animation animationOut;
+	private Animation animationDown;
 	
+	private ArrayList<String> data = new ArrayList<String>();
+	private Resources resources;
 	
 	private int count = 0;
+	private int showCount = 8;
 	private int prvPosition = 0;
+	
+	private int screenWidth = 0;
+	private int screenHeight = 0;
+	private int imageHeight = 0;
+	private HashMap<String,String> upyunInfo = new HashMap<String, String>();
+	private String path = "/";
+	private UpYun upyun;
+	/// 设置是否打印调试信息
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -48,22 +64,50 @@ public class Main extends Activity{
 	private void initData(){
 		inflater = getLayoutInflater();
 		imageLoader=new ImageLoader(this);
-		animationIn = AnimationUtils.loadAnimation(this, R.drawable.animation_translate_in);
-		animationOut = AnimationUtils.loadAnimation(this, R.drawable.animation_translate_out);
-		animationIn.setFillAfter(true);
-		animationOut.setFillAfter(true);
-		for(int i=0;i<10;i++){
-			data.add(mStrings[0]);
-			data.add(mStrings[1]);
-		}
+		
+		DisplayMetrics displaysMetrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics( displaysMetrics );
+		screenWidth = displaysMetrics.widthPixels;
+		screenHeight = displaysMetrics.heightPixels;
+		imageHeight = screenWidth/2-20;
+		
+		
+		resources = getResources();
+		upyunInfo.put("address", resources.getStringArray(R.array.address)[0]);
+		upyunInfo.put("zoomName", resources.getStringArray(R.array.zoom_name)[0]);
+		upyun = new UpYun(resources.getStringArray(R.array.bucketname)[0], resources.getStringArray(R.array.username)[0], resources.getStringArray(R.array.password)[0]);
+		loadData("/");
 		adapter = new MyAdapter();
 	}
 	
 	private void initView(){
+		animationIn = AnimationUtils.loadAnimation(this, R.drawable.animation_translate_in);
+		animationOut = AnimationUtils.loadAnimation(this, R.drawable.animation_translate_out);
+		animationDown = AnimationUtils.loadAnimation(this, R.drawable.animation_translate_down);
+		animationIn.setFillAfter(true);
+		animationOut.setFillAfter(true);
+		animationDown.setFillAfter(true);
 		moreButton = (Button)findViewById(R.id.more_button);
 		gridView = (GridView)findViewById(R.id.gridview);
 		gridView.setAdapter(adapter);
+		
 		gridView.setOnScrollListener(scrollListener);
+		gridView.setOnItemClickListener(itemClick);
+		moreButton.setOnClickListener(click);
+	}
+	
+	private void loadData(String path){
+		/// 读取目录
+		try {
+			List<UpYun.FolderItem> items = upyun.readDir(path);
+			for(int i=0;i<items.size();i++){
+				data.add(items.get(i).name);
+			}
+			count = data.size();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	OnScrollListener scrollListener = new OnScrollListener() {
@@ -92,13 +136,36 @@ public class Main extends Activity{
 		}
 	};
 	
+	AdapterView.OnItemClickListener itemClick = new AdapterView.OnItemClickListener() {
+
+		@Override
+		public void onItemClick(AdapterView<?> arg0, View arg1, int position,
+				long arg3) {
+			// TODO Auto-generated method stub
+			System.out.println(data.get(position));
+		}
+	};
+	
+	View.OnClickListener click = new View.OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			moreButton.startAnimation(animationDown);
+			showCount+=20;
+			adapter.notifyDataSetChanged();
+		}
+	};
+	
 	private class MyAdapter extends BaseAdapter{
 
 		@Override
 		public int getCount() {
 			// TODO Auto-generated method stub
-			count = data.size();
-			return count;
+			if(showCount>count){
+				showCount = count;
+			}
+			return showCount;
 		}
 
 		@Override
@@ -118,16 +185,13 @@ public class Main extends Activity{
 			// TODO Auto-generated method stub
 			if(convertView==null){
 				convertView = inflater.inflate(R.layout.imageview, null);
+				convertView.setMinimumHeight(imageHeight);
 			}
 			ImageView  image = (ImageView)convertView.findViewById(R.id.imageview_item);
-			imageLoader.DisplayImage(data.get(position), image);
+			imageLoader.DisplayImage(upyunInfo.get("address")+path+data.get(position)+upyunInfo.get("zoomName"), image);
 			return convertView;
 		}
 		
 	}
 	
-	private String[] mStrings={
-            "http://www.eoeandroid.com/uc_server/data/avatar/000/62/48/abc.jpg",
-            "http://www.eoeandroid.com/uc_server/data/avatar/000/09/20/48_avatar_middle.jpg"
-    };
 }

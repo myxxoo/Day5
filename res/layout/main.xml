@@ -15,14 +15,16 @@
         android:layout_height="fill_parent"
         android:horizontalSpacing="2.0dp"
         android:verticalSpacing="2.0dp"
+        android:fadingEdge="none"
         android:numColumns="2"
         android:cacheColorHint="@color/transparent"
         android:background="@color/white"
+        android:fastScrollEnabled="false"
         android:listSelector="@color/transparent"
         />
     <Button 
         android:id="@+id/more_button"
-        android:layout_width="wrap_content"
+        android:layout_width="200.0dp"
         android:layout_height="wrap_content"
         android:text="more"
         android:layout_alignParentBottom="true"
