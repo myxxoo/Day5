@@ -11,17 +11,30 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.AbsListView.OnScrollListener;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 public class Main extends Activity{
 	private LayoutInflater inflater;
 	private GridView gridView;
+	private Button moreButton;
 	private MyAdapter adapter;
-	private ImageLoader imageLoader; 
-//	private HashMap<String, Object> data = new HashMap<String, Object>();
+	private ImageLoader imageLoader;
+	
 	private ArrayList<String> data = new ArrayList<String>();
+	private Animation animationIn;
+	private Animation animationOut;
+	
+	
+	private int count = 0;
+	private int prvPosition = 0;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -35,23 +48,57 @@ public class Main extends Activity{
 	private void initData(){
 		inflater = getLayoutInflater();
 		imageLoader=new ImageLoader(this);
-		for(int i=0;i<mStrings.length;i++){
-			data.add(mStrings[i]);
+		animationIn = AnimationUtils.loadAnimation(this, R.drawable.animation_translate_in);
+		animationOut = AnimationUtils.loadAnimation(this, R.drawable.animation_translate_out);
+		animationIn.setFillAfter(true);
+		animationOut.setFillAfter(true);
+		for(int i=0;i<10;i++){
+			data.add(mStrings[0]);
+			data.add(mStrings[1]);
 		}
 		adapter = new MyAdapter();
 	}
 	
 	private void initView(){
+		moreButton = (Button)findViewById(R.id.more_button);
 		gridView = (GridView)findViewById(R.id.gridview);
 		gridView.setAdapter(adapter);
+		gridView.setOnScrollListener(scrollListener);
 	}
+	
+	OnScrollListener scrollListener = new OnScrollListener() {
+		
+		@Override
+		public void onScrollStateChanged(AbsListView view, int scrollState) {
+			// TODO Auto-generated method stub
+			
+			if (view.getLastVisiblePosition() == (view.getCount() - 1) ) { 
+				if(prvPosition != count-1){
+					moreButton.startAnimation(animationIn);
+					moreButton.setVisibility(View.VISIBLE);
+				}
+			}else 
+				if(prvPosition == count-1){
+					moreButton.startAnimation(animationOut);
+				}
+			prvPosition = view.getLastVisiblePosition();
+		}
+		
+		@Override
+		public void onScroll(AbsListView view, int firstVisibleItem,
+				int visibleItemCount, int totalItemCount) {
+			// TODO Auto-generated method stub
+			
+		}
+	};
 	
 	private class MyAdapter extends BaseAdapter{
 
 		@Override
 		public int getCount() {
 			// TODO Auto-generated method stub
-			return data.size();
+			count = data.size();
+			return count;
 		}
 
 		@Override
@@ -72,119 +119,15 @@ public class Main extends Activity{
 			if(convertView==null){
 				convertView = inflater.inflate(R.layout.imageview, null);
 			}
-			
-			imageLoader.DisplayImage(data.get(position), (ImageView)convertView);
+			ImageView  image = (ImageView)convertView.findViewById(R.id.imageview_item);
+			imageLoader.DisplayImage(data.get(position), image);
 			return convertView;
 		}
 		
 	}
 	
 	private String[] mStrings={
-            "http://tmp002.b0.upaiyun.com/1920car_112001.jpg",
-            "http://a3.twimg.com/profile_images/740897825/AndroidCast-350_normal.png",
-            "http://a3.twimg.com/profile_images/121630227/Droid_normal.jpg",
-            "http://a1.twimg.com/profile_images/957149154/twitterhalf_normal.jpg",
-            "http://a1.twimg.com/profile_images/97470808/icon_normal.png",
-            "http://a3.twimg.com/profile_images/511790713/AG.png",
-            "http://a3.twimg.com/profile_images/956404323/androinica-avatar_normal.png",
-            "http://a1.twimg.com/profile_images/909231146/Android_Biz_Man_normal.png",
-            "http://a3.twimg.com/profile_images/72774055/AndroidHomme-LOGO_normal.jpg",
-            "http://a1.twimg.com/profile_images/349012784/android_logo_small_normal.jpg",
-            "http://a1.twimg.com/profile_images/841338368/ea-twitter-icon.png",
-            "http://a3.twimg.com/profile_images/64827025/android-wallpaper6_2560x160_normal.png",
-            "http://a3.twimg.com/profile_images/77641093/AndroidPlanet_normal.png",
-            "http://a1.twimg.com/profile_images/850960042/elandroidelibre-logo_300x300_normal.jpg",
-            "http://a1.twimg.com/profile_images/655119538/andbook.png",
-            "http://a3.twimg.com/profile_images/768060227/ap4u_normal.jpg",
-            "http://a1.twimg.com/profile_images/74724754/android_logo_normal.png",
-            "http://a3.twimg.com/profile_images/681537837/SmallAvatarx150_normal.png",
-            "http://a1.twimg.com/profile_images/63737974/2008-11-06_1637_normal.png",
-            "http://a3.twimg.com/profile_images/548410609/icon_8_73.png",
-            "http://a1.twimg.com/profile_images/612232882/nexusoneavatar_normal.jpg",
-            "http://a1.twimg.com/profile_images/213722080/Bugdroid-phone_normal.png",
-            "http://a1.twimg.com/profile_images/645523828/OT_icon_090918_android_normal.png",
-            "http://a3.twimg.com/profile_images/64827025/android-wallpaper6_2560x160_normal.png",
-            "http://a3.twimg.com/profile_images/77641093/AndroidPlanet.png",
-            "http://a1.twimg.com/profile_images/850960042/elandroidelibre-logo_300x300_normal.jpg",
-            "http://a1.twimg.com/profile_images/655119538/andbook_normal.png",
-            "http://a3.twimg.com/profile_images/511790713/AG_normal.png",
-            "http://a3.twimg.com/profile_images/956404323/androinica-avatar.png",
-            "http://a1.twimg.com/profile_images/909231146/Android_Biz_Man_normal.png",
-            "http://a3.twimg.com/profile_images/72774055/AndroidHomme-LOGO_normal.jpg",
-            "http://a1.twimg.com/profile_images/349012784/android_logo_small_normal.jpg",
-            "http://a1.twimg.com/profile_images/841338368/ea-twitter-icon_normal.png",
-            "http://a3.twimg.com/profile_images/64827025/android-wallpaper6_2560x160_normal.png",
-            "http://a3.twimg.com/profile_images/77641093/AndroidPlanet.png",
-            "http://a3.twimg.com/profile_images/64827025/android-wallpaper6_2560x160_normal.png",
-            "http://a3.twimg.com/profile_images/77641093/AndroidPlanet_normal.png",
-            "http://a1.twimg.com/profile_images/850960042/elandroidelibre-logo_300x300.jpg",
-            "http://a1.twimg.com/profile_images/655119538/andbook_normal.png",
-            "http://a3.twimg.com/profile_images/511790713/AG_normal.png",
-            "http://a3.twimg.com/profile_images/956404323/androinica-avatar_normal.png",
-            "http://a1.twimg.com/profile_images/909231146/Android_Biz_Man_normal.png",
-            "http://a3.twimg.com/profile_images/121630227/Droid.jpg",
-            "http://a1.twimg.com/profile_images/957149154/twitterhalf_normal.jpg",
-            "http://a1.twimg.com/profile_images/97470808/icon_normal.png",
-            "http://a3.twimg.com/profile_images/511790713/AG_normal.png",
-            "http://a3.twimg.com/profile_images/956404323/androinica-avatar_normal.png",
-            "http://a1.twimg.com/profile_images/909231146/Android_Biz_Man.png",
-            "http://a3.twimg.com/profile_images/72774055/AndroidHomme-LOGO_normal.jpg",
-            "http://a1.twimg.com/profile_images/349012784/android_logo_small_normal.jpg",
-            "http://a1.twimg.com/profile_images/841338368/ea-twitter-icon_normal.png",
-            "http://a3.twimg.com/profile_images/64827025/android-wallpaper6_2560x160_normal.png",
-            "http://a3.twimg.com/profile_images/77641093/AndroidPlanet.png",
-            "http://a3.twimg.com/profile_images/670625317/aam-logo-v3-twitter_normal.png",
-            "http://a3.twimg.com/profile_images/740897825/AndroidCast-350_normal.png",
-            "http://a3.twimg.com/profile_images/121630227/Droid_normal.jpg",
-            "http://a1.twimg.com/profile_images/957149154/twitterhalf_normal.jpg",
-            "http://a1.twimg.com/profile_images/97470808/icon.png",
-            "http://a3.twimg.com/profile_images/511790713/AG_normal.png",
-            "http://a3.twimg.com/profile_images/956404323/androinica-avatar_normal.png",
-            "http://a1.twimg.com/profile_images/909231146/Android_Biz_Man_normal.png",
-            "http://a3.twimg.com/profile_images/72774055/AndroidHomme-LOGO_normal.jpg",
-            "http://a1.twimg.com/profile_images/349012784/android_logo_small_normal.jpg",
-            "http://a1.twimg.com/profile_images/841338368/ea-twitter-icon.png",
-            "http://a3.twimg.com/profile_images/64827025/android-wallpaper6_2560x160_normal.png",
-            "http://a3.twimg.com/profile_images/77641093/AndroidPlanet_normal.png",
-            "http://a1.twimg.com/profile_images/850960042/elandroidelibre-logo_300x300_normal.jpg",
-            "http://a1.twimg.com/profile_images/655119538/andbook_normal.png",
-            "http://a3.twimg.com/profile_images/768060227/ap4u_normal.jpg",
-            "http://a1.twimg.com/profile_images/74724754/android_logo.png",
-            "http://a3.twimg.com/profile_images/681537837/SmallAvatarx150_normal.png",
-            "http://a1.twimg.com/profile_images/63737974/2008-11-06_1637_normal.png",
-            "http://a3.twimg.com/profile_images/548410609/icon_8_73_normal.png",
-            "http://a1.twimg.com/profile_images/612232882/nexusoneavatar_normal.jpg",
-            "http://a1.twimg.com/profile_images/213722080/Bugdroid-phone_normal.png",
-            "http://a1.twimg.com/profile_images/645523828/OT_icon_090918_android.png",
-            "http://a3.twimg.com/profile_images/64827025/android-wallpaper6_2560x160_normal.png",
-            "http://a3.twimg.com/profile_images/77641093/AndroidPlanet_normal.png",
-            "http://a1.twimg.com/profile_images/850960042/elandroidelibre-logo_300x300_normal.jpg",
-            "http://a1.twimg.com/profile_images/655119538/andbook.png",
-            "http://a3.twimg.com/profile_images/511790713/AG_normal.png",
-            "http://a3.twimg.com/profile_images/956404323/androinica-avatar_normal.png",
-            "http://a1.twimg.com/profile_images/909231146/Android_Biz_Man_normal.png",
-            "http://a3.twimg.com/profile_images/72774055/AndroidHomme-LOGO_normal.jpg",
-            "http://a1.twimg.com/profile_images/349012784/android_logo_small_normal.jpg",
-            "http://a1.twimg.com/profile_images/841338368/ea-twitter-icon.png",
-            "http://a3.twimg.com/profile_images/64827025/android-wallpaper6_2560x160_normal.png",
-            "http://a3.twimg.com/profile_images/77641093/AndroidPlanet_normal.png",
-            "http://a3.twimg.com/profile_images/64827025/android-wallpaper6_2560x160_normal.png",
-            "http://a3.twimg.com/profile_images/77641093/AndroidPlanet_normal.png",
-            "http://a1.twimg.com/profile_images/850960042/elandroidelibre-logo_300x300_normal.jpg",
-            "http://a1.twimg.com/profile_images/655119538/andbook_normal.png",
-            "http://a3.twimg.com/profile_images/511790713/AG_normal.png",
-            "http://a3.twimg.com/profile_images/956404323/androinica-avatar_normal.png",
-            "http://a1.twimg.com/profile_images/909231146/Android_Biz_Man_normal.png",
-            "http://a3.twimg.com/profile_images/121630227/Droid_normal.jpg",
-            "http://a1.twimg.com/profile_images/957149154/twitterhalf.jpg",
-            "http://a1.twimg.com/profile_images/97470808/icon_normal.png",
-            "http://a3.twimg.com/profile_images/511790713/AG_normal.png",
-            "http://a3.twimg.com/profile_images/956404323/androinica-avatar_normal.png",
-            "http://a1.twimg.com/profile_images/909231146/Android_Biz_Man_normal.png",
-            "http://a3.twimg.com/profile_images/72774055/AndroidHomme-LOGO_normal.jpg",
-            "http://a1.twimg.com/profile_images/349012784/android_logo_small.jpg",
-            "http://a1.twimg.com/profile_images/841338368/ea-twitter-icon_normal.png",
-            "http://a3.twimg.com/profile_images/64827025/android-wallpaper6_2560x160_normal.png",
-            "http://a3.twimg.com/profile_images/77641093/AndroidPlanet_normal.png"
+            "http://www.eoeandroid.com/uc_server/data/avatar/000/62/48/abc.jpg",
+            "http://www.eoeandroid.com/uc_server/data/avatar/000/09/20/48_avatar_middle.jpg"
     };
 }

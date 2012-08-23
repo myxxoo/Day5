@@ -23,6 +23,7 @@ import android.graphics.BitmapFactory;
 import android.sax.StartElementListener;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 
@@ -33,11 +34,14 @@ public class ImageLoader {
     private Map<ImageView, String> imageViews=Collections.synchronizedMap(new WeakHashMap<ImageView, String>());
     ExecutorService executorService; 
     private Animation rotate;
+    private LinearInterpolator interpolator;
     
     public ImageLoader(Context context){
         fileCache=new FileCache(context);
         executorService=Executors.newFixedThreadPool(5);
         rotate =  AnimationUtils.loadAnimation(context, R.drawable.animation_rotate);
+        interpolator = new LinearInterpolator();
+        rotate.setInterpolator(interpolator);
     }
     
     final int stub_id=R.drawable.loading;
@@ -46,12 +50,14 @@ public class ImageLoader {
         imageViews.put(imageView, url);
         Bitmap bitmap=memoryCache.get(url);
         if(bitmap!=null){
+        	imageView.clearAnimation();
             imageView.setImageBitmap(bitmap);
         }
         else
         {	
+        	imageView.setImageResource(stub_id);
+        	imageView.startAnimation(rotate);
             queuePhoto(url, imageView);
-            imageView.setImageResource(stub_id);
         }
     }
         
@@ -171,7 +177,7 @@ public class ImageLoader {
                 photoToLoad.imageView.setImageBitmap(bitmap);
             }else{
                 photoToLoad.imageView.setImageResource(stub_id);
-                photoToLoad.imageView.startAnimation(rotate);
+//                photoToLoad.imageView.startAnimation(rotate);
             }
         }
     }
