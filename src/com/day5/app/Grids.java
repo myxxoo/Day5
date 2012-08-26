@@ -10,6 +10,7 @@ import com.day5.others.apis.UpYun;
 import com.day5.utils.Constant;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -29,7 +30,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.Toast;
 
-public class Main extends Activity{
+public class Grids extends Activity{
 	private LayoutInflater inflater;
 	private GridView gridView;
 	private Button moreButton;
@@ -43,7 +44,7 @@ public class Main extends Activity{
 	private Resources resources;
 	
 	private int count = 0;
-	private int showCount = 8;
+	private int showCount = 12;
 	private int prvPosition = 0;
 	private LayoutParams params;
 	private UpYun upyun;
@@ -133,7 +134,10 @@ public class Main extends Activity{
 		public void onItemClick(AdapterView<?> arg0, View arg1, int position,
 				long arg3) {
 			// TODO Auto-generated method stub
-			System.out.println(data.get(position));
+//			System.out.println(data.get(position));
+			Intent intent = new Intent(Grids.this,Pic.class);
+			intent.putExtra("url", Constant.UPYUN_INFO.get("address")+Constant.PATH+data.get(position));
+			startActivity(intent);
 		}
 	};
 	

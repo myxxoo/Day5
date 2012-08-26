@@ -1,6 +1,9 @@
 package com.day5.lazylist;
 
 import java.io.File;
+
+import com.day5.utils.Constant;
+
 import android.content.Context;
 
 public class FileCache {
@@ -10,7 +13,7 @@ public class FileCache {
     public FileCache(Context context){
         //Find the dir to save cached images
         if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED))
-            cacheDir=new File(android.os.Environment.getExternalStorageDirectory(),"Day5");
+            cacheDir=new File(android.os.Environment.getExternalStorageDirectory(),Constant.DIRECTORY+"cache");
         else
             cacheDir=context.getCacheDir();
         if(!cacheDir.exists())

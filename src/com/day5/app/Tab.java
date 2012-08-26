@@ -69,7 +69,7 @@ public class Tab extends Activity{
 		inflater = getLayoutInflater();
 //		paramsNormal = new LayoutParams(LayoutParams.FILL_PARENT, 2);
 //		paramsFouce = new LayoutParams(LayoutParams.FILL_PARENT, 5);
-		paramsOfContainer = new LayoutParams(LayoutParams.FILL_PARENT,Constant.IMAGE_HEIGHT/4);
+		paramsOfContainer = new LayoutParams(LayoutParams.FILL_PARENT,Constant.IMAGE_HEIGHT/4>100?100:Constant.IMAGE_HEIGHT/4);
 	}
 	
 	private void initTab(){
@@ -92,7 +92,7 @@ public class Tab extends Activity{
 		viewPager = (ViewPager)findViewById(R.id.viewpager);
 		pagerAdapter = new MyPagerAdapter();
 		pagerList.add(manager.startActivity("0", new Intent(Tab.this,Setting.class)).getDecorView());
-		pagerList.add(manager.startActivity("1", new Intent(Tab.this,Main.class)).getDecorView());
+		pagerList.add(manager.startActivity("1", new Intent(Tab.this,Grids.class)).getDecorView());
 		pagerList.add(manager.startActivity("2", new Intent(Tab.this,TagList.class)).getDecorView());
 		viewPager.setAdapter(pagerAdapter);
 		viewPager.setCurrentItem(1);

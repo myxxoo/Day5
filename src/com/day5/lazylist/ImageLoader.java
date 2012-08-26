@@ -1,9 +1,12 @@
 package com.day5.lazylist;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -21,6 +24,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Bitmap.CompressFormat;
 import android.sax.StartElementListener;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -36,13 +40,16 @@ public class ImageLoader {
     ExecutorService executorService; 
     private Animation rotate;
     private LinearInterpolator interpolator;
+    private boolean zoomAble = true;
+    private Context activity;
     
-    public ImageLoader(Context context){
+	public ImageLoader(Context context){
         fileCache=new FileCache(context);
         executorService=Executors.newFixedThreadPool(5);
         rotate =  AnimationUtils.loadAnimation(context, R.drawable.animation_rotate);
         interpolator = new LinearInterpolator();
         rotate.setInterpolator(interpolator);
+        activity = context;
     }
     
     final int stub_id=R.drawable.loading;
@@ -62,6 +69,33 @@ public class ImageLoader {
         }
     }
         
+    public void setBitmapWallPaper(String url){
+    	Bitmap bitmap = memoryCache.get(url);
+    	try {
+			activity.setWallpaper(bitmap);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    
+    public void downloadPic(String url){
+    	Bitmap bitmap=memoryCache.get(url);
+		try {
+			File file = new File(android.os.Environment.getExternalStorageDirectory(),Constant.DIRECTORY+url.hashCode()+".jpg");
+	    	FileOutputStream bos = new FileOutputStream(file);
+	    	bitmap.compress(CompressFormat.JPEG, 100, bos);
+	    	bos.flush();
+	    	bos.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    
     private void queuePhoto(String url, ImageView imageView)
     {
         PhotoToLoad p=new PhotoToLoad(url, imageView);
@@ -109,7 +143,7 @@ public class ImageLoader {
             final int REQUIRED_SIZE = Constant.SCREEN_WIDTH;
             int width_tmp=o.outWidth, height_tmp=o.outHeight;
             int scale=1;
-            while(true){
+            while(true && zoomAble){
                 if(width_tmp<REQUIRED_SIZE)
                     break;
                 width_tmp/=2;
@@ -181,7 +215,19 @@ public class ImageLoader {
             }
         }
     }
+    
+    public boolean isZoomAble() {
+		return zoomAble;
+	}
 
+	public void setZoomAble(boolean zoomAble) {
+		this.zoomAble = zoomAble;
+	}
+	
+	public void memoryCacheClear(){
+		memoryCache.clear();
+	}
+	
     public void clearCache() {
         memoryCache.clear();
         fileCache.clear();
