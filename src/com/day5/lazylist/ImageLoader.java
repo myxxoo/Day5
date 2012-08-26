@@ -15,6 +15,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import com.day5.app.R;
+import com.day5.utils.Constant;
 
 import android.app.Activity;
 import android.content.Context;
@@ -105,11 +106,11 @@ public class ImageLoader {
             BitmapFactory.decodeStream(new FileInputStream(f),null,o);
             
             //Find the correct scale value. It should be the power of 2.
-            final int REQUIRED_SIZE=70;
+            final int REQUIRED_SIZE = Constant.SCREEN_WIDTH;
             int width_tmp=o.outWidth, height_tmp=o.outHeight;
             int scale=1;
             while(true){
-                if(width_tmp/2<REQUIRED_SIZE || height_tmp/2<REQUIRED_SIZE)
+                if(width_tmp<REQUIRED_SIZE)
                     break;
                 width_tmp/=2;
                 height_tmp/=2;
@@ -177,7 +178,6 @@ public class ImageLoader {
                 photoToLoad.imageView.setImageBitmap(bitmap);
             }else{
                 photoToLoad.imageView.setImageResource(stub_id);
-//                photoToLoad.imageView.startAnimation(rotate);
             }
         }
     }

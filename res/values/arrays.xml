@@ -13,6 +13,6 @@
         <item >http://tmp001.b0.upaiyun.com</item>
     </string-array>
     <string-array name="zoom_name">
-        <item >-400</item>
+        <item >-300</item>
     </string-array>
 </resources>

@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.day5.lazylist.ImageLoader;
 import com.day5.others.apis.UpYun;
+import com.day5.utils.Constant;
 
 import android.app.Activity;
 import android.content.res.AssetManager;
@@ -25,6 +26,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.Toast;
 
 public class Main extends Activity{
@@ -43,12 +45,7 @@ public class Main extends Activity{
 	private int count = 0;
 	private int showCount = 8;
 	private int prvPosition = 0;
-	
-	private int screenWidth = 0;
-	private int screenHeight = 0;
-	private int imageHeight = 0;
-	private HashMap<String,String> upyunInfo = new HashMap<String, String>();
-	private String path = "/";
+	private LayoutParams params;
 	private UpYun upyun;
 	/// 设置是否打印调试信息
 	@Override
@@ -64,19 +61,13 @@ public class Main extends Activity{
 	private void initData(){
 		inflater = getLayoutInflater();
 		imageLoader=new ImageLoader(this);
-		
-		DisplayMetrics displaysMetrics = new DisplayMetrics();
-		getWindowManager().getDefaultDisplay().getMetrics( displaysMetrics );
-		screenWidth = displaysMetrics.widthPixels;
-		screenHeight = displaysMetrics.heightPixels;
-		imageHeight = screenWidth/2-20;
-		
+		params = new LayoutParams(LayoutParams.FILL_PARENT,Constant.IMAGE_HEIGHT);
 		
 		resources = getResources();
-		upyunInfo.put("address", resources.getStringArray(R.array.address)[0]);
-		upyunInfo.put("zoomName", resources.getStringArray(R.array.zoom_name)[0]);
+		Constant.UPYUN_INFO.put("address", resources.getStringArray(R.array.address)[0]);
+		Constant.UPYUN_INFO.put("zoomName", resources.getStringArray(R.array.zoom_name)[0]);
 		upyun = new UpYun(resources.getStringArray(R.array.bucketname)[0], resources.getStringArray(R.array.username)[0], resources.getStringArray(R.array.password)[0]);
-		loadData("/");
+		loadData(Constant.PATH);
 		adapter = new MyAdapter();
 	}
 	
@@ -185,10 +176,11 @@ public class Main extends Activity{
 			// TODO Auto-generated method stub
 			if(convertView==null){
 				convertView = inflater.inflate(R.layout.imageview, null);
-				convertView.setMinimumHeight(imageHeight);
+				convertView.setMinimumHeight(Constant.IMAGE_HEIGHT);
 			}
 			ImageView  image = (ImageView)convertView.findViewById(R.id.imageview_item);
-			imageLoader.DisplayImage(upyunInfo.get("address")+path+data.get(position)+upyunInfo.get("zoomName"), image);
+			image.setLayoutParams(params);
+			imageLoader.DisplayImage(Constant.UPYUN_INFO.get("address")+Constant.PATH+data.get(position)+Constant.UPYUN_INFO.get("zoomName"), image);
 			return convertView;
 		}
 		
