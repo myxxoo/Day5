@@ -29,6 +29,8 @@ public class Pic extends Activity{
 	
 	private ImageLoader imageLoader;
 	private final int IMG_LOAD_FINISH = 10;
+	private final int SET_WALLPEPER_FINISH = 11;
+	
 	private Handler handler = new Handler(){
 		public void handleMessage(android.os.Message msg) {
 			switch (msg.what) {
@@ -36,7 +38,9 @@ public class Pic extends Activity{
 				imageLoader.setZoomAble(false);
 				imageLoader.DisplayImage(url, imgView);
 				break;
-
+			case SET_WALLPEPER_FINISH:
+				Toast.makeText(Pic.this, R.string.set_success, Toast.LENGTH_SHORT).show();
+				break;
 			default:
 				break;
 			}
@@ -82,8 +86,7 @@ public class Pic extends Activity{
 			// TODO Auto-generated method stub
 			switch (v.getId()) {
 			case R.id.pic_set:	
-				imageLoader.setBitmapWallPaper(url);
-				Toast.makeText(Pic.this, R.string.set_success, Toast.LENGTH_SHORT).show();
+				new SetWallPaper().start();
 				break;
 			case R.id.pic_down:
 				imageLoader.downloadPic(url);
@@ -95,8 +98,19 @@ public class Pic extends Activity{
 		}
 	};
 	
+	
+	
 	protected void onDestroy() {
 		imageLoader.memoryCacheClear();
 		super.onDestroy();
 	};
+	
+	private class SetWallPaper extends Thread{
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			imageLoader.setBitmapWallPaper(url);
+			handler.sendEmptyMessage(SET_WALLPEPER_FINISH);
+		}
+	}
 }

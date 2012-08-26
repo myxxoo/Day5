@@ -7,6 +7,6 @@ public class Constant {
 	public static int SCREEN_WIDTH = 0;
 	public static int SCREEN_HEIGHT = 0;
 	public static HashMap<String,String> UPYUN_INFO = new HashMap<String, String>();
-	public static String PATH = "/";
+	public static String PATH = "/good/";
 	public static final String DIRECTORY = "Day5/";
 }

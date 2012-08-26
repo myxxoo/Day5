@@ -15,4 +15,26 @@
     <string-array name="zoom_name">
         <item >-300</item>
     </string-array>
+    <string-array name="taglist_cn">
+        <item >推荐</item>
+        <item >自然风光</item>
+        <item >动物植物</item>
+        <item >卡通系列</item>
+        <item >星空宇宙</item>
+        <item >美女写真</item>
+        <item >创意壁纸</item>
+        <item >手绘素描</item>
+        <item >非主流</item>
+    </string-array>
+    <string-array name="taglist_en">
+        <item >/good/</item>
+        <item >/ziran/</item>
+        <item >/dongzhi/</item>
+        <item >/katong/</item>
+        <item >/xingkong/</item>
+        <item >/meinv/</item>
+        <item >/chuangyi/</item>
+        <item >/shouhui/</item>
+        <item >/fzl/</item>
+    </string-array>
 </resources>

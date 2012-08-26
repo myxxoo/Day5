@@ -4,10 +4,12 @@
     android:layout_height="fill_parent"
     android:background="@color/light_black_1"
     android:orientation="vertical" >
-    <TextView 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="taglist"
-        />
-
+    <ListView 
+        android:id="@+id/taglist"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:cacheColorHint="@color/transparent"
+        android:fadingEdge="none"
+        android:fastScrollEnabled="false"
+        ></ListView>
 </LinearLayout>

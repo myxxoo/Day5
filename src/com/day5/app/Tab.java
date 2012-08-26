@@ -31,18 +31,17 @@ import android.widget.TabHost.TabSpec;
 public class Tab extends Activity{
 	private Resources resources;
 	private LayoutInflater inflater;
-//	private LayoutParams paramsNormal;
-//	private LayoutParams paramsFouce;
 	private LayoutParams paramsOfContainer;
 	private ImageView bar0,bar1,bar2;
 	private LinearLayout container;
 	private LinearLayout settingLayout,mainLayout,taglistLayout;
 	
 	
-	private ViewPager viewPager;
-	private ArrayList<View> pagerList = new ArrayList<View>();
-	private MyPagerAdapter pagerAdapter;
-	private LocalActivityManager manager;
+	public static ViewPager viewPager;
+	public static ArrayList<View> pagerList = new ArrayList<View>();
+	public static MyPagerAdapter pagerAdapter;
+	public static LocalActivityManager manager;
+	public static Intent refreshIntent;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -67,8 +66,7 @@ public class Tab extends Activity{
 		
 		resources = getResources();
 		inflater = getLayoutInflater();
-//		paramsNormal = new LayoutParams(LayoutParams.FILL_PARENT, 2);
-//		paramsFouce = new LayoutParams(LayoutParams.FILL_PARENT, 5);
+		refreshIntent = new Intent(Tab.this,Grids.class);
 		paramsOfContainer = new LayoutParams(LayoutParams.FILL_PARENT,Constant.IMAGE_HEIGHT/4>100?100:Constant.IMAGE_HEIGHT/4);
 	}
 	
@@ -128,23 +126,14 @@ public class Tab extends Activity{
 			bar0.setBackgroundResource(R.drawable.tab_on);
 			bar1.setBackgroundResource(R.drawable.tab_off);
 			bar2.setBackgroundResource(R.drawable.tab_off);
-//			bar0.setLayoutParams(paramsFouce);
-//			bar1.setLayoutParams(paramsNormal);
-//			bar2.setLayoutParams(paramsNormal);
 		}else if(i == 1){
 			bar0.setBackgroundResource(R.drawable.tab_off);
 			bar1.setBackgroundResource(R.drawable.tab_on);
 			bar2.setBackgroundResource(R.drawable.tab_off);
-//			bar0.setLayoutParams(paramsNormal);
-//			bar1.setLayoutParams(paramsFouce);
-//			bar2.setLayoutParams(paramsNormal);
 		}else if(i == 2){
 			bar0.setBackgroundResource(R.drawable.tab_off);
 			bar1.setBackgroundResource(R.drawable.tab_off);
 			bar2.setBackgroundResource(R.drawable.tab_on);
-//			bar0.setLayoutParams(paramsNormal);
-//			bar1.setLayoutParams(paramsNormal);
-//			bar2.setLayoutParams(paramsFouce);
 		}
 	}
 	
@@ -169,6 +158,19 @@ public class Tab extends Activity{
 		public int getCount() {
 			// TODO Auto-generated method stub
 			return pagerList.size();
+		}
+		
+		@Override
+		public void notifyDataSetChanged() {
+			// TODO Auto-generated method stub
+			super.notifyDataSetChanged();
+			
+		}
+		
+		@Override
+		public int getItemPosition(Object object) {
+			// TODO Auto-generated method stub
+		    return POSITION_NONE;
 		}
 
 		@Override
@@ -217,5 +219,5 @@ public class Tab extends Activity{
         @Override
         public void onPageScrollStateChanged(int arg0) {
         }
-}
+    }
 }

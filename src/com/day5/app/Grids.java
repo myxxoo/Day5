@@ -59,6 +59,14 @@ public class Grids extends Activity{
 		
 	}
 	
+	@Override
+	protected void onNewIntent(Intent intent) {
+		// TODO Auto-generated method stub
+		super.onNewIntent(intent);
+		initData();
+		initView();
+	}
+	
 	private void initData(){
 		inflater = getLayoutInflater();
 		imageLoader=new ImageLoader(this);
