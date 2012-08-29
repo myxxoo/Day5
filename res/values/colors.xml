@@ -9,4 +9,6 @@
     
     <color name="tab_bg">#404040</color>
     <color name="tab_bg_press">#397994</color>
+    
+    <color name="tag_bg">#E7E7E7</color>
 </resources>

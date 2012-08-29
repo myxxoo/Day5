@@ -37,4 +37,7 @@
         <item >/shouhui/</item>
         <item >/fzl/</item>
     </string-array>
+    <string-array name="taglist_icon">
+        <item ></item>
+    </string-array>
 </resources>

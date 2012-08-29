@@ -2,7 +2,6 @@ package com.day5.app;
 
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import com.day5.lazylist.ImageLoader;
@@ -10,11 +9,12 @@ import com.day5.others.apis.UpYun;
 import com.day5.utils.Constant;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
-import android.content.res.AssetManager;
+import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +28,6 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout.LayoutParams;
-import android.widget.Toast;
 
 public class Grids extends Activity{
 	private LayoutInflater inflater;
@@ -45,10 +44,11 @@ public class Grids extends Activity{
 	
 	private int count = 0;
 	private int showCount = 12;
+	private final int DEFAULT_SHOW_COUNT = 12;
 	private int prvPosition = 0;
 	private LayoutParams params;
 	private UpYun upyun;
-	/// 设置是否打印调试信息
+	private MSGReceiver receiver = new MSGReceiver();
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -78,6 +78,7 @@ public class Grids extends Activity{
 		upyun = new UpYun(resources.getStringArray(R.array.bucketname)[0], resources.getStringArray(R.array.username)[0], resources.getStringArray(R.array.password)[0]);
 		loadData(Constant.PATH);
 		adapter = new MyAdapter();
+		registerReceiver(receiver, new IntentFilter("android.intent.action.IMAGE_TAG_CHANGE"));
 	}
 	
 	private void initView(){
@@ -98,6 +99,7 @@ public class Grids extends Activity{
 	
 	private void loadData(String path){
 		/// 读取目录
+		data.clear();
 		try {
 			List<UpYun.FolderItem> items = upyun.readDir(path);
 			for(int i=0;i<items.size();i++){
@@ -160,6 +162,25 @@ public class Grids extends Activity{
 		}
 	};
 	
+	protected void onRestart() {
+		super.onRestart();
+		System.out.println("restart");
+	};
+	
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		System.out.println("resume");
+	}
+	
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		unregisterReceiver(receiver);
+		super.onDestroy();
+	}
+	
 	private class MyAdapter extends BaseAdapter{
 
 		@Override
@@ -197,5 +218,20 @@ public class Grids extends Activity{
 		}
 		
 	}
+	
+    public class MSGReceiver extends BroadcastReceiver{
+
+    	@Override
+    	public void onReceive(Context context, Intent intent) {
+    		// TODO Auto-generated method stub
+    		String action = intent.getAction();
+    		if("android.intent.action.IMAGE_TAG_CHANGE".equals(action)){
+    			loadData(Constant.PATH);
+    			showCount = DEFAULT_SHOW_COUNT;
+    			adapter.notifyDataSetChanged();
+    		}
+    	}
+
+    }
 	
 }
