@@ -7,4 +7,17 @@
 	<string name="download">下载</string>
 	<string name="set_success">设置成功</string>
 	<string name="download_succss">下载成功</string>
+	<string name="manage_pic">管理壁纸</string>
+	<string name="clear_cache">清除缓存</string>
+	<string name="cleaning">清除中·····</string>
+	<string name="clear_cache_finish">缓存已清除</string>
+	<string name="about">关于</string>
+	<string name="manage">管理</string>
+	<string name="not_download">你还没有下载过壁纸</string>
+	<string name="cancle">取消</string>
+	<string name="delete">删除</string>
+	<string name="delete_pic">删除壁纸</string>
+	<string name="delete_success">删除成功</string>
+	<string name="delete_confirm">确定要删除选择的壁纸吗？</string>
+	<string name="enter">确定</string>
 </resources>

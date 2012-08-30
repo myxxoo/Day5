@@ -26,6 +26,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Bitmap.CompressFormat;
 import android.sax.StartElementListener;
+import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
@@ -82,17 +83,19 @@ public class ImageLoader {
     public void downloadPic(String url){
     	Bitmap bitmap=memoryCache.get(url);
 		try {
-			File file = new File(android.os.Environment.getExternalStorageDirectory(),Constant.DIRECTORY+url.hashCode()+".jpg");
+			File file = new File(android.os.Environment.getExternalStorageDirectory(),Constant.DIRECTORY_DOWNLOAD+url.hashCode()+".jpg");
 	    	FileOutputStream bos = new FileOutputStream(file);
 	    	bitmap.compress(CompressFormat.JPEG, 100, bos);
 	    	bos.flush();
 	    	bos.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+//			e.printStackTrace();
+			Log.i("Day5", "文件未找到，地址可能失效");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+//			e.printStackTrace();
+			Log.i("Day5", "文件未找到，地址可能失效");
 		}
     }
     
@@ -126,7 +129,8 @@ public class ImageLoader {
             bitmap = decodeFile(f);
             return bitmap;
         } catch (Exception ex){
-           ex.printStackTrace();
+//           ex.printStackTrace();
+        	Log.i("Day5", "文件未找到，地址可能失效");
            return null;
         }
     }

@@ -10,7 +10,9 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name = "android.permission.SET_WALLPAPER"/>
     
-    
+    <supports-screens 
+          android:normalScreens="true"  
+          android:smallScreens="true"  /> 
     <application
         android:icon="@drawable/ic_launcher"
         android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
@@ -25,6 +27,7 @@
         <activity android:name=".Setting"/>
         <activity android:name=".TagList"/>
         <activity android:name=".Pic"/>
+        <activity android:name=".ManagePic"/>
+        <activity android:name=".PicLocal"/>
     </application>
-
 </manifest>

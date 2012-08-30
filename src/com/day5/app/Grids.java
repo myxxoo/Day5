@@ -53,7 +53,7 @@ public class Grids extends Activity{
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
+		setContentView(R.layout.grids);
 		initData();
 		initView();
 		

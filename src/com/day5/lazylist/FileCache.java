@@ -16,8 +16,13 @@ public class FileCache {
             cacheDir=new File(android.os.Environment.getExternalStorageDirectory(),Constant.DIRECTORY+"cache");
         else
             cacheDir=context.getCacheDir();
-        if(!cacheDir.exists())
+        if(!cacheDir.exists()){
+        	File f = new File(android.os.Environment.getExternalStorageDirectory(),Constant.DIRECTORY_DOWNLOAD);
+			if(!f.exists()){
+				f.mkdirs();
+			}
             cacheDir.mkdirs();
+        }
     }
     
     public File getFile(String url){

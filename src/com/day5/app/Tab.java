@@ -62,12 +62,12 @@ public class Tab extends Activity{
 		getWindowManager().getDefaultDisplay().getMetrics( displaysMetrics );
 		Constant.SCREEN_WIDTH = displaysMetrics.widthPixels;
 		Constant.SCREEN_HEIGHT = displaysMetrics.heightPixels;
-		Constant.IMAGE_HEIGHT = Constant.SCREEN_WIDTH/2+30;
+		Constant.IMAGE_HEIGHT = Constant.SCREEN_WIDTH/2-30;
 		
 		resources = getResources();
 		inflater = getLayoutInflater();
 		refreshIntent = new Intent(Tab.this,Grids.class);
-		paramsOfContainer = new LayoutParams(LayoutParams.FILL_PARENT,Constant.IMAGE_HEIGHT/4>100?100:Constant.IMAGE_HEIGHT/4);
+		paramsOfContainer = new LayoutParams(LayoutParams.FILL_PARENT,Constant.IMAGE_HEIGHT/3>150?150:Constant.IMAGE_HEIGHT/3);
 	}
 	
 	private void initTab(){

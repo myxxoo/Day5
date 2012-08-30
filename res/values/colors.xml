@@ -11,4 +11,8 @@
     <color name="tab_bg_press">#397994</color>
     
     <color name="tag_bg">#E7E7E7</color>
+    
+    <color name="list_font">#6B82A9</color>
+    <color name="tools_bar_bg">#1F1F1F</color>
+    <color name="tools_bar_border">#111</color>
 </resources>

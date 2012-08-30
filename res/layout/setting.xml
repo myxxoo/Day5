@@ -4,10 +4,14 @@
     android:layout_height="fill_parent"
     android:background="@color/gray"
     android:orientation="vertical" >
-    <TextView 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="setting"
+    <ListView
+        android:id="@+id/setting_list" 
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:divider="@drawable/image_list_separator_line"
+        android:dividerHeight="2.0px"
+        android:cacheColorHint="@color/transparent"
+        android:fadingEdge="none"
         />
 
 </LinearLayout>

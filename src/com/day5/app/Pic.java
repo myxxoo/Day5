@@ -16,12 +16,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-public class Pic extends Activity{
+public class Pic extends Activity implements OnTouchListener{
 	private Intent intent;
 	private String url,zoomUrl;
 	private ImageView imgView;
@@ -30,6 +32,8 @@ public class Pic extends Activity{
 	private ImageLoader imageLoader;
 	private final int IMG_LOAD_FINISH = 10;
 	private final int SET_WALLPEPER_FINISH = 11;
+	
+	
 	
 	private Handler handler = new Handler(){
 		public void handleMessage(android.os.Message msg) {
@@ -112,5 +116,11 @@ public class Pic extends Activity{
 			imageLoader.setBitmapWallPaper(url);
 			handler.sendEmptyMessage(SET_WALLPEPER_FINISH);
 		}
+	}
+
+	@Override
+	public boolean onTouch(View arg0, MotionEvent arg1) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }
