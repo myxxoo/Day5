@@ -93,7 +93,7 @@ public class ManagePic extends Activity{
 				// TODO Auto-generated method stub
 				if(!editting){
 					Intent intent = new Intent(ManagePic.this,PicLocal.class);
-					intent.putExtra("path", android.os.Environment.getExternalStorageDirectory()+"/"+Constant.DIRECTORY_DOWNLOAD+data[position]);
+					intent.putExtra("path", data[position]);
 					startActivity(intent);
 				}else{
 					if(deleteList.indexOf(data[position]) == -1){

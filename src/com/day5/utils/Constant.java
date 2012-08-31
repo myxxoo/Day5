@@ -10,4 +10,5 @@ public class Constant {
 	public static String PATH = "/good/";
 	public static final String DIRECTORY = "Day5/";
 	public static final String DIRECTORY_DOWNLOAD = "Day5/download/";
+	public static String DIRECTORY_SDCARD = "";
 }

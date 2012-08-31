@@ -63,6 +63,7 @@ public class Tab extends Activity{
 		Constant.SCREEN_WIDTH = displaysMetrics.widthPixels;
 		Constant.SCREEN_HEIGHT = displaysMetrics.heightPixels;
 		Constant.IMAGE_HEIGHT = Constant.SCREEN_WIDTH/2-30;
+		Constant.DIRECTORY_SDCARD = android.os.Environment.getExternalStorageDirectory()+"/";
 		
 		resources = getResources();
 		inflater = getLayoutInflater();
