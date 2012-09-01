@@ -20,4 +20,9 @@
 	<string name="delete_success">删除成功</string>
 	<string name="delete_confirm">确定要删除选择的壁纸吗？</string>
 	<string name="enter">确定</string>
+	<string name="detailed_information">详细信息</string>
+	<string name="type">类型</string>
+	<string name="size">大小</string>
+	<string name="location">位置</string>
+	<string name="time">时间</string>
 </resources>

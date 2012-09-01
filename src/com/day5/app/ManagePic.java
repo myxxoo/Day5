@@ -1,6 +1,7 @@
 package com.day5.app;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 
 import com.day5.utils.Constant;
@@ -94,6 +95,8 @@ public class ManagePic extends Activity{
 				if(!editting){
 					Intent intent = new Intent(ManagePic.this,PicLocal.class);
 					intent.putExtra("path", data[position]);
+					intent.putExtra("position", position);
+					intent.putExtra("list", data);
 					startActivity(intent);
 				}else{
 					if(deleteList.indexOf(data[position]) == -1){
@@ -124,6 +127,7 @@ public class ManagePic extends Activity{
 	
 	private void loadFileList(){
 		File f = new File(android.os.Environment.getExternalStorageDirectory(),Constant.DIRECTORY_DOWNLOAD);
+		data = f.list(new ImageFilter());
 		data = f.list();
 	}
 	
@@ -230,6 +234,24 @@ public class ManagePic extends Activity{
 			v.setVisibility(View.GONE);
 			image.setImageBitmap(BitmapFactory.decodeFile(android.os.Environment.getExternalStorageDirectory()+"/"+Constant.DIRECTORY_DOWNLOAD+data[position]));
 			return convertView;
+		}
+	}
+	
+	class ImageFilter implements FilenameFilter{
+		 public boolean isImg(String filename){    
+			    if (filename.toLowerCase().endsWith(".jpg") || filename.toLowerCase().endsWith(".jpeg")){   
+			    	//把文件转成小写后看其后缀是否为.jpg
+			      return true;    
+			    }else{    
+			      return false;    
+			    }    
+			  }  
+	 
+		@Override
+		public boolean accept(File dir, String filename) {
+			// TODO Auto-generated method stub
+			return isImg(filename);
+			//覆写accept方法
 		}
 	}
 }

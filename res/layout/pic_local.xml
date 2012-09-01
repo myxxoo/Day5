@@ -5,9 +5,70 @@
     android:orientation="vertical" >
     <ImageView
         android:id="@+id/pic_local_img" 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:scaleType="matrix"
         android:layout_gravity="center"
         />
+    <RelativeLayout 
+        android:id="@+id/pic_local_tools_bar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@drawable/bg_tools_bar"
+        android:padding="5.0dp"
+        android:layout_margin="10.0dp"
+        >
+        <Button 
+            android:id="@+id/pic_local_set"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:text="@string/set_as_wallpaper"
+            style="@style/tools_bar_button_text"
+            android:paddingLeft="5.0dp"
+            android:paddingRight="5.0dp"
+            android:background="@drawable/sl_tools_bar_button"
+            />
+        <Button 
+            android:id="@+id/pic_local_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:text="@string/delete"
+            android:paddingLeft="5.0dp"
+            android:paddingRight="5.0dp"
+            style="@style/tools_bar_button_text"
+            android:background="@drawable/sl_tools_bar_button"
+            />
+	</RelativeLayout>
+	<ImageButton 
+	    android:id="@+id/pic_local_info"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:background="@color/transparent"
+	    android:src="@drawable/control_info"
+	    android:padding="10.0dp"
+	    android:layout_gravity="right|top"
+	    />
+	<ImageButton 
+	    android:id="@+id/pic_local_previous"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:background="@color/transparent"
+	    android:src="@drawable/previous"
+	    android:padding="10.0dp"
+	    android:layout_gravity="left|center_vertical"
+	    />
+	<ImageButton 
+	    android:id="@+id/pic_local_next"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:background="@color/transparent"
+	    android:src="@drawable/next"
+	    android:padding="10.0dp"
+	    android:layout_gravity="right|center_vertical"
+	    />
 </FrameLayout>
