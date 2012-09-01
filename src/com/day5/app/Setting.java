@@ -89,12 +89,12 @@ public class Setting extends Activity{
 	private void putData(){
 		Map<String,Integer> map  = new HashMap<String, Integer>();
 		map.put("text", R.string.manage_pic);
-		map.put("icon", R.drawable.manage_pic);
+		map.put("icon", R.drawable.setting);
 		data.add(map);
 		
 		map  = new HashMap<String, Integer>();
 		map.put("text", R.string.clear_cache);
-		map.put("icon", R.drawable.clear_cache);
+		map.put("icon", R.drawable.clear);
 		data.add(map);
 		
 		map  = new HashMap<String, Integer>();
@@ -118,7 +118,7 @@ public class Setting extends Activity{
 			// TODO Auto-generated method stub
 			Map<String,Integer> map  = new HashMap<String, Integer>();
 			map.put("text", R.string.cleaning);
-			map.put("icon", R.drawable.clear_cache);
+			map.put("icon", R.drawable.clear);
 			data.set(1, map);
 			handler.sendEmptyMessage(CLEAR_START);
 			clearCache();
@@ -130,7 +130,7 @@ public class Setting extends Activity{
 			}
 			map  = new HashMap<String, Integer>();
 			map.put("text", R.string.clear_cache);
-			map.put("icon", R.drawable.clear_cache);
+			map.put("icon", R.drawable.clear);
 			data.set(1, map);
 			handler.sendEmptyMessage(CLEAR_FINISH);
 		}

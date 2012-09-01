@@ -441,18 +441,12 @@ public class PicLocal extends Activity implements OnTouchListener{
     			setPrvNextButtonVisible(false);
     			matrix.setScale(1.0f, 1.0f);
     		}
-//    		imageView.setImageMatrix(matrix);
     		center();
     		return super.onDoubleTap(e);
     	}
     	@Override
     	public boolean onSingleTapUp(MotionEvent e) {
     		// TODO Auto-generated method stub
-//    		if(infoBtn.getVisibility() == View.VISIBLE){
-//    			infoBtn.setVisibility(View.GONE);
-//    		}else{
-//    			infoBtn.setVisibility(View.VISIBLE);
-//    		}
     		return super.onSingleTapUp(e);
     	}
     }

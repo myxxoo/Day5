@@ -1,25 +1,22 @@
 package com.day5.app;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 import com.day5.lazylist.ImageLoader;
-import com.day5.lazylist.MemoryCache;
 import com.day5.utils.Constant;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.FloatMath;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -29,11 +26,11 @@ import android.widget.Toast;
 
 public class Pic extends Activity implements OnTouchListener{
 	private Intent intent;
-	private String url,zoomUrl;
+	private String url;
 	private ImageView imgView;
 	private Button paperBtn,downBtn;
 	
-//	private ImageLoader imageLoader;
+	private ImageLoader imageLoader;
 	private final int IMG_LOAD_FINISH = 10;
 	private final int SET_WALLPEPER_FINISH = 11;
 	
@@ -41,24 +38,26 @@ public class Pic extends Activity implements OnTouchListener{
     Matrix savedMatrix = new Matrix();
     Bitmap bitmap;
 
-    float minScaleR;// 最小缩放比例
-    static final float MAX_SCALE = 4f;// 最大缩放比例
+    float minScaleR;
+    static final float MAX_SCALE = 4f;
 
-    static final int NONE = 0;// 初始状态
-    static final int DRAG = 1;// 拖动
-    static final int ZOOM = 2;// 缩放
+    static final int NONE = 0;
+    static final int DRAG = 1;
+    static final int ZOOM = 2;
     int mode = NONE;
 
     PointF prev = new PointF();
     PointF mid = new PointF();
     float dist = 1f;
-	
+    
+    private GestureDetector gestureDetector;
+    private MSGReceiver receiver = new MSGReceiver();
 	private Handler handler = new Handler(){
 		public void handleMessage(android.os.Message msg) {
 			switch (msg.what) {
 			case IMG_LOAD_FINISH:
-//				imageLoader.setZoomAble(false);
-//				imageLoader.DisplayImage(url, imgView);
+				imageLoader.setZoomAble(false);
+				imageLoader.DisplayImage(url, imgView);
 				break;
 			case SET_WALLPEPER_FINISH:
 				Toast.makeText(Pic.this, R.string.set_success, Toast.LENGTH_SHORT).show();
@@ -81,13 +80,14 @@ public class Pic extends Activity implements OnTouchListener{
 	private void initData(){
 		intent = getIntent();
 		url = intent.getStringExtra("url");
-		zoomUrl = url+Constant.UPYUN_INFO.get("zoomName");
-//		imageLoader = new ImageLoader(this);
+//		url = "http://www.eoeandroid.com/data/attachment/forum/201208/31/101030vm8di8isv1s33pzv.png";
+		imageLoader = new ImageLoader(this);
+		registerReceiver(receiver, new IntentFilter("android.intent.action.IMG_LOAD_FINISH"));
 	}
 	
 	private void initView(){
 		imgView = (ImageView)findViewById(R.id.pic_img);
-//		imageLoader.DisplayImage(zoomUrl, imgView);
+		imgView.setImageResource(R.drawable.image_loading);
 		paperBtn = (Button)findViewById(R.id.pic_set);
 		downBtn = (Button)findViewById(R.id.pic_down);
 		
@@ -111,7 +111,7 @@ public class Pic extends Activity implements OnTouchListener{
 				new SetWallPaper().start();
 				break;
 			case R.id.pic_down:
-//				imageLoader.downloadPic(url);
+				imageLoader.downloadPic(url);
 				Toast.makeText(Pic.this, R.string.download_succss, Toast.LENGTH_SHORT).show();
 				break;
 			default:
@@ -259,7 +259,8 @@ public class Pic extends Activity implements OnTouchListener{
 	
 	
 	protected void onDestroy() {
-//		imageLoader.memoryCacheClear();
+		imageLoader.memoryCacheClear();
+		unregisterReceiver(receiver);
 		super.onDestroy();
 	};
 	
@@ -267,10 +268,49 @@ public class Pic extends Activity implements OnTouchListener{
 		@Override
 		public void run() {
 			// TODO Auto-generated method stub
-//			imageLoader.setBitmapWallPaper(url);
+			imageLoader.setBitmapWallPaper(url);
 			handler.sendEmptyMessage(SET_WALLPEPER_FINISH);
 		}
 	}
+	
+    public class MSGReceiver extends BroadcastReceiver{
+
+    	@Override
+    	public void onReceive(Context context, Intent intent) {
+    		// TODO Auto-generated method stub
+    		String action = intent.getAction();
+    		if("android.intent.action.IMG_LOAD_FINISH".equals(action)){
+    			imgView.setOnTouchListener(Pic.this);
+    			gestureDetector = new GestureDetector(Pic.this,new OnDoubleClick());
+    			bitmap = imageLoader.getMemoryBitmap(url);
+    			minZoom();
+    			center();
+    			imgView.setImageMatrix(matrix);
+    		}
+    	}
+
+    }
+    
+    private class OnDoubleClick extends GestureDetector.SimpleOnGestureListener{
+    	@Override
+    	public boolean onDoubleTap(MotionEvent e) {
+    		// TODO Auto-generated method stub
+    		float p[] = new float[9];
+            matrix.getValues(p);
+    		if(p[0] > minScaleR){
+    			 matrix.setScale(minScaleR, minScaleR);
+    		}else{
+    			matrix.setScale(1.0f, 1.0f);
+    		}
+    		center();
+    		return super.onDoubleTap(e);
+    	}
+    	@Override
+    	public boolean onSingleTapUp(MotionEvent e) {
+    		// TODO Auto-generated method stub
+    		return super.onSingleTapUp(e);
+    	}
+    }
 
 	
 }

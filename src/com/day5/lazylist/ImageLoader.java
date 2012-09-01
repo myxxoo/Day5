@@ -22,6 +22,7 @@ import com.day5.utils.Constant;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Bitmap.CompressFormat;
@@ -80,6 +81,7 @@ public class ImageLoader {
 		}
     }
     
+    
     public void downloadPic(String url){
     	Bitmap bitmap=memoryCache.get(url);
 		try {
@@ -97,6 +99,10 @@ public class ImageLoader {
 //			e.printStackTrace();
 			Log.i("Day5", "文件未找到，地址可能失效");
 		}
+    }
+    
+    public Bitmap getMemoryBitmap(String url){
+    	return memoryCache.get(url);
     }
     
     private void queuePhoto(String url, ImageView imageView)
@@ -214,6 +220,10 @@ public class ImageLoader {
             if(bitmap!=null){
             	photoToLoad.imageView.clearAnimation();
                 photoToLoad.imageView.setImageBitmap(bitmap);
+                if(!zoomAble){
+                	Intent intent = new Intent("android.intent.action.IMG_LOAD_FINISH");
+                    activity.sendBroadcast(intent);
+                }
             }else{
                 photoToLoad.imageView.setImageResource(stub_id);
             }

@@ -25,6 +25,8 @@ public class TagList extends Activity{
 	private LayoutInflater inflater;
 	private HashMap<String,Integer> tagMap = new HashMap<String, Integer>();
 	
+	private int[] iconList ={R.drawable.tag_1,R.drawable.tag_2,R.drawable.tag_3,R.drawable.tag_4,R.drawable.tag_5,R.drawable.tag_6,R.drawable.tag_7,
+			R.drawable.tag_8,R.drawable.tag_9,R.drawable.tag_10,R.drawable.tag_11,R.drawable.tag_12,R.drawable.tag_13};
 	private AssetManager asset;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +93,7 @@ public class TagList extends Activity{
 				holder = (ViewHolder)convertView.getTag();
 			}
 			holder.text.setText(tagListCn[position]);
+			holder.icon.setImageResource(iconList[position]);
 			return convertView;
 		}
 		

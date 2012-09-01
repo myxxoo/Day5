@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 
+import com.day5.lazylist.FileImgLoader;
 import com.day5.utils.Constant;
 
 import android.app.Activity;
@@ -43,6 +44,9 @@ public class ManagePic extends Activity{
 	private ArrayList<String> deleteList = new ArrayList<String>();
 	private final int DELETE_FINISH = 10;
 	private AlertDialog dialog;
+	
+	private FileImgLoader imagelLoader;
+	
 	private Handler handler = new Handler(){
 		public void handleMessage(android.os.Message msg) {
 			if(msg.what == DELETE_FINISH){
@@ -74,6 +78,7 @@ public class ManagePic extends Activity{
 	private void initData(){
 		inflater = getLayoutInflater();
 		loadFileList();
+		imagelLoader = new FileImgLoader(this);
 		params = new LayoutParams(LayoutParams.FILL_PARENT,Constant.IMAGE_HEIGHT);
 		adapter = new MyAdapter(this, R.layout.imageview_local);
 	}
@@ -232,7 +237,7 @@ public class ManagePic extends Activity{
 			View v = convertView.findViewById(R.id.imageview_local_edit);
 			v.setLayoutParams(params);
 			v.setVisibility(View.GONE);
-			image.setImageBitmap(BitmapFactory.decodeFile(android.os.Environment.getExternalStorageDirectory()+"/"+Constant.DIRECTORY_DOWNLOAD+data[position]));
+			imagelLoader.setImageBitmap(data[position], image);
 			return convertView;
 		}
 	}
