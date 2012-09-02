@@ -15,4 +15,11 @@
     <color name="list_font">#6B82A9</color>
     <color name="tools_bar_bg">#1F1F1F</color>
     <color name="tools_bar_border">#111</color>
+    
+    <color name="center_color">#895472</color>
+    <color name="center_on">#C49AB2</color>
+    <color name="both_sides">#4F7200</color>
+    <color name="both_sides_on">#8EB82E</color>
+    <color name="grid_item_1">#666</color>
+    <color name="grid_item_2">#CCC</color>
 </resources>

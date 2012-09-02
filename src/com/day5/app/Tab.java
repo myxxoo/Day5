@@ -7,6 +7,8 @@ import java.util.List;
 import com.day5.utils.Constant;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.LocalActivityManager;
 import android.app.TabActivity;
 import android.content.Intent;
@@ -17,12 +19,14 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.DisplayMetrics;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.RelativeLayout;
 import android.widget.TabHost;
@@ -38,10 +42,13 @@ public class Tab extends Activity{
 	
 	
 	public static ViewPager viewPager;
-	public static ArrayList<View> pagerList = new ArrayList<View>();
-	public static MyPagerAdapter pagerAdapter;
-	public static LocalActivityManager manager;
-	public static Intent refreshIntent;
+	private ArrayList<View> pagerList = new ArrayList<View>();
+	private MyPagerAdapter pagerAdapter;
+	private LocalActivityManager manager;
+	
+//	private AlertDialog dialog;
+	private int BACK_COUNT = 0;
+	private long prvBackTime = 0;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -55,6 +62,7 @@ public class Tab extends Activity{
 //		tabHost.setup(manager);
 		
 		initViewPager();
+//		buildDialog();
 	}
 	
 	private void initData(){
@@ -67,7 +75,6 @@ public class Tab extends Activity{
 		
 		resources = getResources();
 		inflater = getLayoutInflater();
-		refreshIntent = new Intent(Tab.this,Grids.class);
 		paramsOfContainer = new LayoutParams(LayoutParams.FILL_PARENT,Constant.IMAGE_HEIGHT/3>150?150:Constant.IMAGE_HEIGHT/3);
 	}
 	
@@ -121,6 +128,12 @@ public class Tab extends Activity{
 			}
 		}
 	};
+	
+//	private void buildDialog(){
+//		Builder b = new Builder(this);
+//		b.setTitle(R.string.exit);
+//		b.setMessage(R.string)
+//	}
 
 	private void setCurrentBar(int i){
 		if(i == 0){
@@ -136,6 +149,27 @@ public class Tab extends Activity{
 			bar1.setBackgroundResource(R.drawable.tab_off);
 			bar2.setBackgroundResource(R.drawable.tab_on);
 		}
+	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		// TODO Auto-generated method stub
+		if(keyCode == KeyEvent.KEYCODE_BACK){
+			if(event.getEventTime() - prvBackTime >= 2000){
+				BACK_COUNT = 0;
+				prvBackTime = event.getEventTime();
+			}
+			BACK_COUNT++;
+			if(BACK_COUNT == 1){
+				Toast.makeText(Tab.this, R.string.exit_confirm, Toast.LENGTH_SHORT).show();
+				return false;
+			}
+			if(BACK_COUNT == 2){
+				finish();
+				return false;
+			}
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 	
 	@Override
@@ -180,7 +214,7 @@ public class Tab extends Activity{
 			((ViewPager) container).removeView(pagerList.get(position));
 		}
 
-		@Override
+		@Override 
 		public Object instantiateItem(View container, int position) {
 			// TODO Auto-generated method stub
 			((ViewPager) container).addView(pagerList.get(position), 0);

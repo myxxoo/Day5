@@ -14,7 +14,7 @@
             android:id="@+id/tab_setting"
 		    android:layout_width="wrap_content"
 		    android:layout_height="fill_parent"
-		    android:background="@drawable/sl_tab"
+		    android:background="@drawable/sl_tab_side"
 		    android:layout_weight="1"
 		    android:orientation="vertical"
 		    android:gravity="bottom"
@@ -25,7 +25,7 @@
 		        android:layout_weight="1"
 		        android:scaleType="center"
 		        android:background="@color/transparent"
-		        android:src="@drawable/sl_tab_setting"
+		        android:src="@drawable/tab_settings"
 		        />
 		    <ImageView
 			    android:id="@+id/tab_setting_bar"
@@ -37,13 +37,13 @@
 		<ImageView
 	        android:layout_width="1.0px"
 	        android:layout_height="fill_parent"
-	        android:src="@drawable/tab_separate"
+	        android:background="@color/black"
 	        />
 		<LinearLayout 
 		    android:id="@+id/tab_main"
 		    android:layout_width="wrap_content"
 		    android:layout_height="fill_parent"
-		    android:background="@drawable/sl_tab"
+		    android:background="@drawable/sl_tab_center"
 		    android:layout_weight="3"
 		    android:orientation="vertical"
 		    android:gravity="bottom"
@@ -66,13 +66,13 @@
 		<ImageView
 	       android:layout_width="1.0px"
 	       android:layout_height="fill_parent"
-	       android:src="@drawable/tab_separate"
+	       android:background="@color/black"
 	       />
 		<LinearLayout 
 		    android:id="@+id/tab_taglist"
 		    android:layout_width="wrap_content"
 		    android:layout_height="fill_parent"
-		    android:background="@drawable/sl_tab"
+		    android:background="@drawable/sl_tab_side"
 		    android:layout_weight="1"
 		    android:orientation="vertical"
 		    android:gravity="bottom"
@@ -83,7 +83,7 @@
 		        android:layout_weight="1"
 		        android:scaleType="center"
 		        android:background="@color/transparent"
-		        android:src="@drawable/sl_tab_list"
+		        android:src="@drawable/tab_list"
 		        />
 		    <ImageView
 			    android:id="@+id/tab_taglist_bar"

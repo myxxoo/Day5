@@ -143,11 +143,13 @@ public class ManagePic extends Activity{
 			// TODO Auto-generated method stub
 			switch (v.getId()) {
 			case R.id.manage_pic_edit:
-				editBtn.setVisibility(View.GONE);
-				cancleBtn.setVisibility(View.VISIBLE);
-				deleteBtn.setVisibility(View.VISIBLE);
-				toolsBarText.setText(R.string.delete_pic);
-				editting = true;
+				if(data.length != 0){
+					editBtn.setVisibility(View.GONE);
+					cancleBtn.setVisibility(View.VISIBLE);
+					deleteBtn.setVisibility(View.VISIBLE);
+					toolsBarText.setText(R.string.delete_pic);
+					editting = true;
+				}
 				break;
 			case R.id.manage_pic_cancle:
 				editBtn.setVisibility(View.VISIBLE);

@@ -15,6 +15,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Handler;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +34,7 @@ import android.widget.LinearLayout.LayoutParams;
 public class Grids extends Activity{
 	private LayoutInflater inflater;
 	private GridView gridView;
-	private Button moreButton;
+//	private Button moreButton;
 	private MyAdapter adapter;
 	private ImageLoader imageLoader;
 	private Animation animationIn;
@@ -43,11 +45,27 @@ public class Grids extends Activity{
 	private Resources resources;
 	
 	private int count = 0;
-	private int showCount = 12;
-	private final int DEFAULT_SHOW_COUNT = 12;
+	private final int DEFAULT_SHOW_COUNT = 18;
+	private int showCount = DEFAULT_SHOW_COUNT;
+	private final int NOTIFY_GRID = 10;
 	private int prvPosition = 0;
+	private boolean loading = false;
 	private LayoutParams params;
-	private UpYun upyun;
+	private Handler handler = new Handler(){
+		public void handleMessage(android.os.Message msg) {
+			switch (msg.what) {
+			case NOTIFY_GRID:
+				adapter.notifyDataSetChanged();
+				loading = false;
+				Intent intent = new Intent("android.intent.action.CACHE_IMG");
+				sendBroadcast(intent);
+				break;
+
+			default:
+				break;
+			}
+		};
+	};
 	private MSGReceiver receiver = new MSGReceiver();
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -73,10 +91,13 @@ public class Grids extends Activity{
 		params = new LayoutParams(LayoutParams.FILL_PARENT,Constant.IMAGE_HEIGHT);
 		
 		resources = getResources();
-		Constant.UPYUN_INFO.put("address", resources.getStringArray(R.array.address)[0]);
-		Constant.UPYUN_INFO.put("zoomName", resources.getStringArray(R.array.zoom_name)[0]);
-		upyun = new UpYun(resources.getStringArray(R.array.bucketname)[0], resources.getStringArray(R.array.username)[0], resources.getStringArray(R.array.password)[0]);
-		loadData(Constant.PATH);
+		if(Constant.CACHE_DATA.size() == 0){
+			loadData(Constant.PATH);
+		}else{
+			data = (ArrayList<String>) Constant.CACHE_DATA.clone();
+			Constant.CACHE_DATA.clear();
+			count = data.size();
+		}
 		adapter = new MyAdapter();
 		registerReceiver(receiver, new IntentFilter("android.intent.action.IMAGE_TAG_CHANGE"));
 	}
@@ -88,28 +109,33 @@ public class Grids extends Activity{
 		animationIn.setFillAfter(true);
 		animationOut.setFillAfter(true);
 		animationDown.setFillAfter(true);
-		moreButton = (Button)findViewById(R.id.more_button);
+//		moreButton = (Button)findViewById(R.id.more_button);
 		gridView = (GridView)findViewById(R.id.gridview);
 		gridView.setAdapter(adapter);
 		
 		gridView.setOnScrollListener(scrollListener);
 		gridView.setOnItemClickListener(itemClick);
-		moreButton.setOnClickListener(click);
+//		moreButton.setOnClickListener(click);
 	}
 	
 	private void loadData(String path){
 		/// 读取目录
 		data.clear();
-		try {
-			List<UpYun.FolderItem> items = upyun.readDir(path);
-			for(int i=0;i<items.size();i++){
-				data.add(items.get(i).name);
-			}
-			count = data.size();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		for(int i=0;i<500;i++){
+			data.add("http://img.pconline.com.cn/images/upload/upc/tx/photoblog/1208/27/c1/13214601_13214601_1346005151075_mthumb.jpg");
+			data.add("http://image165-c.poco.cn/mypoco/myphoto/20110914/22/119696201109142231233162131778455_006.jpg");
 		}
+		count = data.size();
+//		try {
+//			List<UpYun.FolderItem> items = upyun.readDir(path);
+//			for(int i=0;i<items.size();i++){
+//				data.add(items.get(i).name);
+//			}
+//			count = data.size();
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 	
 	OnScrollListener scrollListener = new OnScrollListener() {
@@ -118,16 +144,11 @@ public class Grids extends Activity{
 		public void onScrollStateChanged(AbsListView view, int scrollState) {
 			// TODO Auto-generated method stub
 			
-			if (view.getLastVisiblePosition() == (view.getCount() - 1) ) { 
-				if(prvPosition != count-1){
-					moreButton.startAnimation(animationIn);
-					moreButton.setVisibility(View.VISIBLE);
-				}
-			}else 
-				if(prvPosition == count-1){
-					moreButton.startAnimation(animationOut);
-				}
-			prvPosition = view.getLastVisiblePosition();
+			if (view.getLastVisiblePosition() > (view.getCount() - 3) && !loading) { 
+				loading = true;
+				showCount+=DEFAULT_SHOW_COUNT;
+				handler.sendEmptyMessage(NOTIFY_GRID);
+			}
 		}
 		
 		@Override
@@ -146,21 +167,30 @@ public class Grids extends Activity{
 			// TODO Auto-generated method stub
 //			System.out.println(data.get(position));
 			Intent intent = new Intent(Grids.this,Pic.class);
-			intent.putExtra("url", Constant.UPYUN_INFO.get("address")+Constant.PATH+data.get(position));
+//			intent.putExtra("url", Constant.UPYUN_INFO.get("address")+Constant.PATH+data.get(position));
+			intent.putExtra("name", data.get(position));
+			intent.putExtra("url", data.get(position));
 			startActivity(intent);
 		}
 	};
 	
-	View.OnClickListener click = new View.OnClickListener() {
-		
-		@Override
-		public void onClick(View v) {
-			// TODO Auto-generated method stub
-			moreButton.startAnimation(animationDown);
-			showCount+=20;
-			adapter.notifyDataSetChanged();
-		}
-	};
+//	View.OnClickListener click = new View.OnClickListener() {
+//		
+//		@Override
+//		public void onClick(View v) {
+//			// TODO Auto-generated method stub
+//			moreButton.startAnimation(animationDown);
+//			showCount+=showCount;
+//			adapter.notifyDataSetChanged();
+//		}
+//	};
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		// TODO Auto-generated method stub
+		super.onKeyDown(keyCode, event);
+		return false;
+	}
 	
 	protected void onRestart() {
 		super.onRestart();
@@ -213,7 +243,8 @@ public class Grids extends Activity{
 			}
 			ImageView  image = (ImageView)convertView.findViewById(R.id.imageview_item);
 			image.setLayoutParams(params);
-			imageLoader.DisplayImage(Constant.UPYUN_INFO.get("address")+Constant.PATH+data.get(position)+Constant.UPYUN_INFO.get("zoomName"), image);
+//			imageLoader.DisplayImage(Constant.UPYUN_INFO.get("address")+Constant.PATH+data.get(position)+Constant.UPYUN_INFO.get("zoomName"), image);
+			imageLoader.DisplayImage(data.get(position), image);
 			return convertView;
 		}
 		
@@ -228,7 +259,10 @@ public class Grids extends Activity{
     		if("android.intent.action.IMAGE_TAG_CHANGE".equals(action)){
     			loadData(Constant.PATH);
     			showCount = DEFAULT_SHOW_COUNT;
+//    			gridView.setSelection(0);
+    			gridView.scrollTo(0, 0);
     			adapter.notifyDataSetChanged();
+//    			gridView.scrollTo(0, 0);
     		}
     	}
 

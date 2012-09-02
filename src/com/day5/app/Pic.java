@@ -1,15 +1,22 @@
 package com.day5.app;
 
 
+import java.io.File;
+import java.util.Calendar;
+
 import com.day5.lazylist.ImageLoader;
 import com.day5.utils.Constant;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.RectF;
@@ -21,18 +28,22 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 public class Pic extends Activity implements OnTouchListener{
 	private Intent intent;
-	private String url;
+	private String url,name;
 	private ImageView imgView;
 	private Button paperBtn,downBtn;
+	private ImageButton infoBtn;
 	
 	private ImageLoader imageLoader;
 	private final int IMG_LOAD_FINISH = 10;
 	private final int SET_WALLPEPER_FINISH = 11;
+	private final int SHOW_INFO_DIALOG = 12;
+	private final int DOWNLOAD_IMG = 13;
 	
 	Matrix matrix = new Matrix();
     Matrix savedMatrix = new Matrix();
@@ -50,17 +61,25 @@ public class Pic extends Activity implements OnTouchListener{
     PointF mid = new PointF();
     float dist = 1f;
     
+    private AlertDialog dialog;
     private GestureDetector gestureDetector;
     private MSGReceiver receiver = new MSGReceiver();
 	private Handler handler = new Handler(){
 		public void handleMessage(android.os.Message msg) {
 			switch (msg.what) {
 			case IMG_LOAD_FINISH:
-				imageLoader.setZoomAble(false);
-				imageLoader.DisplayImage(url, imgView);
+				imageLoader.setImage(url, imgView);
 				break;
 			case SET_WALLPEPER_FINISH:
 				Toast.makeText(Pic.this, R.string.set_success, Toast.LENGTH_SHORT).show();
+				break;
+			case SHOW_INFO_DIALOG:
+				buildDialog();
+				dialog.show();
+				break;
+			case DOWNLOAD_IMG:
+				imageLoader.downloadPic(url);
+				Toast.makeText(Pic.this, R.string.download_succss, Toast.LENGTH_SHORT).show();
 				break;
 			default:
 				break;
@@ -80,24 +99,34 @@ public class Pic extends Activity implements OnTouchListener{
 	private void initData(){
 		intent = getIntent();
 		url = intent.getStringExtra("url");
-//		url = "http://www.eoeandroid.com/data/attachment/forum/201208/31/101030vm8di8isv1s33pzv.png";
+		name = intent.getStringExtra("name");
 		imageLoader = new ImageLoader(this);
 		registerReceiver(receiver, new IntentFilter("android.intent.action.IMG_LOAD_FINISH"));
+		gestureDetector = new GestureDetector(this,new OnDoubleClick());
 	}
 	
 	private void initView(){
 		imgView = (ImageView)findViewById(R.id.pic_img);
-		imgView.setImageResource(R.drawable.image_loading);
+		bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.image_loading);
+		imgView.setImageBitmap(bitmap);
 		paperBtn = (Button)findViewById(R.id.pic_set);
 		downBtn = (Button)findViewById(R.id.pic_down);
+		infoBtn = (ImageButton)findViewById(R.id.pic_info);
 		
+		imgView.setOnTouchListener(this);
+		imgView.setImageMatrix(matrix);
 		paperBtn.setOnClickListener(click);
 		downBtn.setOnClickListener(click);
+		infoBtn.setOnClickListener(click);
+		infoBtn.setVisibility(View.GONE);
+		minZoom();
+		center();
 	}
 	
 	Thread loadImg = new Thread(){
 		public void run() {
 			handler.sendEmptyMessage(IMG_LOAD_FINISH);
+			imageLoader.setZoomAble(false);
 		};
 	};
 	
@@ -111,8 +140,10 @@ public class Pic extends Activity implements OnTouchListener{
 				new SetWallPaper().start();
 				break;
 			case R.id.pic_down:
-				imageLoader.downloadPic(url);
-				Toast.makeText(Pic.this, R.string.download_succss, Toast.LENGTH_SHORT).show();
+				handler.sendEmptyMessage(DOWNLOAD_IMG);
+				break;
+			case R.id.pic_info:
+				handler.sendEmptyMessage(SHOW_INFO_DIALOG);
 				break;
 			default:
 				break;
@@ -120,11 +151,51 @@ public class Pic extends Activity implements OnTouchListener{
 		}
 	};
 	
+	private void buildDialog(){
+		Builder b = new Builder(this);
+		b.setTitle(R.string.detailed_information);
+		String[] list = new String[3];
+		list[0] = getString(R.string.type)+": "+"JPEG";
+		String unit = "";
+		long length = imageLoader.getImgByteSize();
+		if(length>1024){
+			length = length/1024;
+			unit = "KB";
+		}
+		if(length>1024){ 
+			length = length/1024;
+			unit = "MB";
+		}
+		list[1] = getString(R.string.size)+": "+length+unit;
+		list[2] = getString(R.string.measurement)+": "+bitmap.getWidth()+" x "+bitmap.getHeight();
+		b.setItems(list, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+			}
+		});
+		b.setPositiveButton(R.string.enter, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				dialog.dismiss();
+			}
+		});
+		dialog = b.create();
+	}
+	
+	long getSizeInBytes(Bitmap bitmap) {
+        if(bitmap==null)
+            return 0;
+        return bitmap.getRowBytes() * bitmap.getHeight();
+    }
+	
 	/**
      * 触屏监听
      */
     public boolean onTouch(View v, MotionEvent event) {
-
+    	gestureDetector.onTouchEvent(event);
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
         // 主点按下
         case MotionEvent.ACTION_DOWN:
@@ -260,6 +331,7 @@ public class Pic extends Activity implements OnTouchListener{
 	
 	protected void onDestroy() {
 		imageLoader.memoryCacheClear();
+		bitmap.recycle();
 		unregisterReceiver(receiver);
 		super.onDestroy();
 	};
@@ -280,12 +352,12 @@ public class Pic extends Activity implements OnTouchListener{
     		// TODO Auto-generated method stub
     		String action = intent.getAction();
     		if("android.intent.action.IMG_LOAD_FINISH".equals(action)){
-    			imgView.setOnTouchListener(Pic.this);
-    			gestureDetector = new GestureDetector(Pic.this,new OnDoubleClick());
     			bitmap = imageLoader.getMemoryBitmap(url);
+    			matrix.setScale(1.0f, 1.0f);
     			minZoom();
     			center();
     			imgView.setImageMatrix(matrix);
+    			infoBtn.setVisibility(View.VISIBLE);
     		}
     	}
 

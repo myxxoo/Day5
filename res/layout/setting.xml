@@ -8,10 +8,11 @@
         android:id="@+id/setting_list" 
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:cacheColorHint="@color/transparent"
         android:divider="@drawable/image_list_separator_line"
         android:dividerHeight="2.0px"
-        android:cacheColorHint="@color/transparent"
         android:fadingEdge="none"
+        android:fastScrollEnabled="false"
         />
 
 </LinearLayout>

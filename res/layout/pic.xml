@@ -27,8 +27,8 @@
             android:layout_centerVertical="true"
             android:text="@string/set_as_wallpaper"
             style="@style/tools_bar_button_text"
-            android:paddingLeft="5.0dp"
-            android:paddingRight="5.0dp"
+            android:paddingLeft="10.0dp"
+            android:paddingRight="10.0dp"
             android:background="@drawable/sl_tools_bar_button"
             />
         <Button 
@@ -38,14 +38,14 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:text="@string/download"
-            android:paddingLeft="5.0dp"
-            android:paddingRight="5.0dp"
+            android:paddingLeft="10.0dp"
+            android:paddingRight="10.0dp"
             style="@style/tools_bar_button_text"
             android:background="@drawable/sl_tools_bar_button"
             />
 	</RelativeLayout>
 	<ImageButton
-	    android:id="@+id/pic_local_info"
+	    android:id="@+id/pic_info"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:background="@color/transparent"

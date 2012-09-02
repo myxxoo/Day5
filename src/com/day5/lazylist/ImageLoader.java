@@ -44,6 +44,7 @@ public class ImageLoader {
     private LinearInterpolator interpolator;
     private boolean zoomAble = true;
     private Context activity;
+    private long imgByteSize = 0;
     
 	public ImageLoader(Context context){
         fileCache=new FileCache(context);
@@ -67,6 +68,24 @@ public class ImageLoader {
         {	
         	imageView.setImageResource(stub_id);
         	imageView.startAnimation(rotate);
+            queuePhoto(url, imageView);
+        }
+    }
+    
+    public void setImage(String url, ImageView imageView)
+    {
+    	imageViews.put(imageView, url);
+        Bitmap bitmap=getBitmap(url);
+        if(bitmap!=null){
+            imageView.setImageBitmap(bitmap);
+            memoryCache.put(url, bitmap);
+            if(!zoomAble){
+            	Intent intent = new Intent("android.intent.action.IMG_LOAD_FINISH");
+                activity.sendBroadcast(intent);
+            }
+        }
+        else
+        {	
             queuePhoto(url, imageView);
         }
     }
@@ -105,6 +124,10 @@ public class ImageLoader {
     	return memoryCache.get(url);
     }
     
+    public long getImgByteSize() {
+		return imgByteSize;
+	}
+    
     private void queuePhoto(String url, ImageView imageView)
     {
         PhotoToLoad p=new PhotoToLoad(url, imageView);
@@ -117,9 +140,10 @@ public class ImageLoader {
         
         //from SD cache
         Bitmap b = decodeFile(f);
-        if(b!=null)
+        if(b!=null){
+        	imgByteSize = f.length();
             return b;
-        
+        }
         //from web
         try {
             Bitmap bitmap=null;
@@ -133,6 +157,7 @@ public class ImageLoader {
             Utils.CopyStream(is, os);
             os.close();
             bitmap = decodeFile(f);
+            imgByteSize = f.length();
             return bitmap;
         } catch (Exception ex){
 //           ex.printStackTrace();

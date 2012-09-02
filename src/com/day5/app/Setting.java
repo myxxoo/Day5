@@ -1,16 +1,22 @@
 package com.day5.app;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.day5.app.Grids.MSGReceiver;
 import com.day5.lazylist.FileCache;
+import com.day5.utils.Constant;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,13 +32,15 @@ public class Setting extends Activity{
 	private ArrayList<Map<String,Integer>> data = new ArrayList<Map<String,Integer>>();
 	private MyAdapter adapter;
 	private LayoutInflater inflater;
-	private final int CLEAR_START = 10;
 	private final int CLEAR_FINISH = 11;
 	private final int NOTIFY_DATA_SET_CHANGED = 10;
+	
+//	public static boolean CACHE_CLEAN = false; 
+	private MSGReceiver receiver = new MSGReceiver();
 	private Handler handler = new Handler(){
 		public void handleMessage(android.os.Message msg) {
 			switch (msg.what) {
-			case CLEAR_START:
+			case NOTIFY_DATA_SET_CHANGED:
 				adapter.notifyDataSetChanged();
 				break;
 			case CLEAR_FINISH:
@@ -57,6 +65,7 @@ public class Setting extends Activity{
 		inflater = getLayoutInflater();
 		putData();
 		adapter = new MyAdapter(this, R.layout.setting_item);
+		registerReceiver(receiver, new IntentFilter("android.intent.action.CACHE_IMG"));
 	}
 	private void initView(){
 		listView = (ListView)findViewById(R.id.setting_list);
@@ -92,10 +101,18 @@ public class Setting extends Activity{
 		map.put("icon", R.drawable.setting);
 		data.add(map);
 		
-		map  = new HashMap<String, Integer>();
-		map.put("text", R.string.clear_cache);
-		map.put("icon", R.drawable.clear);
-		data.add(map);
+		File f = new File(Constant.DIRECTORY_SDCARD+Constant.DIRECTORY_CACHE);
+		if(f.list()==null || f.list().length == 0){
+			map  = new HashMap<String, Integer>();
+			map.put("text", R.string.cache_clean);
+			map.put("icon", R.drawable.clear_ok);
+			data.add(map);
+		}else{
+			map  = new HashMap<String, Integer>();
+			map.put("text", R.string.clear_cache);
+			map.put("icon", R.drawable.clear);
+			data.add(map);
+		}
 		
 		map  = new HashMap<String, Integer>();
 		map.put("text", R.string.about);
@@ -112,15 +129,29 @@ public class Setting extends Activity{
 		//显示一个dialog
 	}
 	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		// TODO Auto-generated method stub
+		super.onKeyDown(keyCode, event);
+		return false;
+	}
+	
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		unregisterReceiver(receiver);
+		super.onDestroy();
+	}
+	
 	private class CleanThread extends Thread{
 		@Override
 		public void run() {
 			// TODO Auto-generated method stub
 			Map<String,Integer> map  = new HashMap<String, Integer>();
 			map.put("text", R.string.cleaning);
-			map.put("icon", R.drawable.clear);
+			map.put("icon", data.get(1).get("icon"));
 			data.set(1, map);
-			handler.sendEmptyMessage(CLEAR_START);
+			handler.sendEmptyMessage(NOTIFY_DATA_SET_CHANGED);
 			clearCache();
 			try {
 				sleep(500);
@@ -129,8 +160,8 @@ public class Setting extends Activity{
 				e.printStackTrace();
 			}
 			map  = new HashMap<String, Integer>();
-			map.put("text", R.string.clear_cache);
-			map.put("icon", R.drawable.clear);
+			map.put("text", R.string.cache_clean);
+			map.put("icon", R.drawable.clear_ok);
 			data.set(1, map);
 			handler.sendEmptyMessage(CLEAR_FINISH);
 		}
@@ -163,4 +194,21 @@ public class Setting extends Activity{
 		}
 		
 	}
+	
+	public class MSGReceiver extends BroadcastReceiver{
+
+    	@Override
+    	public void onReceive(Context context, Intent intent) {
+    		// TODO Auto-generated method stub
+    		String action = intent.getAction();
+    		if("android.intent.action.CACHE_IMG".equals(action)){
+    			Map<String,Integer> map  = new HashMap<String, Integer>();
+    			map.put("text", R.string.clear_cache);
+    			map.put("icon", R.drawable.clear);
+    			data.set(1, map);
+    			handler.sendEmptyMessage(NOTIFY_DATA_SET_CHANGED);
+    		}
+    	}
+
+    }
 }
